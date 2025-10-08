@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const initModels = require("./init-models")
 
 const sequelize = new Sequelize(process.env.DB, process.env.DB_USER, process.env.DB_PASS, {
     host: process.env.DB_HOST,
@@ -12,4 +13,6 @@ sequelize.authenticate()
     console.log("Erro: Conexão com o banco de dados não realizada com sucesso!");
 });
 
-module.exports = sequelize;
+const models = initModels(sequelize);
+
+module.exports = {sequelize, models};

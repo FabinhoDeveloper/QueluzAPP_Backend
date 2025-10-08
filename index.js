@@ -6,7 +6,8 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const { eAdmin } = require('./source/middlewares/auth');
-const User = require('./source/models/User');
+
+const {models} = require("./source/models/index")
 
 const app = express();
 
@@ -20,8 +21,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/users", eAdmin, async (req, res) => {
-    await User.findAll({
+app.get("/users", async (req, res) => {
+    await models.usuario.findAll({
         attributes: ['id', 'cpf', 'password'],
         order: [['id', 'DESC']]
     })
@@ -42,7 +43,7 @@ app.get("/user/:id", eAdmin, async (req, res) => {
     const { id } = req.params;
 
     //await User.findAll({ where: { id: id } })
-    await User.findByPk(id)
+    await usuario.findByPk(id)
         .then((user) => {
             return res.json({
                 erro: false,
@@ -60,7 +61,7 @@ app.post("/user", eAdmin, async (req, res) => {
     var dados = req.body;
     dados.password = await bcrypt.hash(dados.password, 8);
 
-    await User.create(dados)
+    await usuario.create(dados)
         .then(() => {
             return res.json({
                 erro: false,
@@ -77,7 +78,7 @@ app.post("/user", eAdmin, async (req, res) => {
 app.put("/user", eAdmin, async (req, res) => {
     const { id } = req.body;
 
-    await User.update(req.body, { where: { id } })
+    await usuario.update(req.body, { where: { id } })
         .then(() => {
             return res.json({
                 erro: false,
@@ -97,7 +98,7 @@ app.put("/user-senha", eAdmin, async (req, res) => {
 
     var senhaCrypt = await bcrypt.hash(password, 8);
 
-    await User.update({ password: senhaCrypt }, { where: { id } })
+    await usuario.update({ password: senhaCrypt }, { where: { id } })
         .then(() => {
             return res.json({
                 erro: false,
@@ -115,7 +116,7 @@ app.put("/user-senha", eAdmin, async (req, res) => {
 app.delete("/user/:id", eAdmin, async (req, res) => {
     const { id } = req.params;
 
-    await User.destroy({ where: { id } })
+    await usuario.destroy({ where: { id } })
         .then(() => {
             return res.json({
                 erro: false,
@@ -130,7 +131,7 @@ app.delete("/user/:id", eAdmin, async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    const user = await User.findOne({
+    const user = await usuario.findOne({
         attributes: ['id', 'name', 'email', 'password'],
         where: {
             email: req.body.email
@@ -163,7 +164,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.get("/val-token", eAdmin, async (req, res) => {
-    await User.findByPk(req.userId, { attributes: ['id', 'name', 'email'] })
+    await usuario.findByPk(req.userId, { attributes: ['id', 'name', 'email'] })
         .then((user) => {
             return res.json({
                 erro: false,

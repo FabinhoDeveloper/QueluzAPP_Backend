@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "models": "sequelize-auto -o './source/models' -d queluz17 -h mysql.web-ded-325716b.kinghost.net -u queluz1717_add1 -p 3306 -x Pmqinfo2021 -e mysql"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
