@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "models": "sequelize-auto -o './source/models' -d queluz17 -h mysql.web-ded-325716b.kinghost.net -u queluz1717_add1 -p 3306 -x Pmqinfo2021 -e mysql"
   },
   "author": "",
   "license": "ISC",
@@ -15,10 +16,12 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mysql2": "^2.2.5",
-    "sequelize": "^6.6.2"
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.6.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "sequelize-auto": "^0.8.8"
   }
 }

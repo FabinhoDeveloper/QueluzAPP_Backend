@@ -21,7 +21,6 @@ app.use((req, res, next) => {
 });
 
 app.get("/users", eAdmin, async (req, res) => {
-
     await User.findAll({
         attributes: ['id', 'cpf', 'password'],
         order: [['id', 'DESC']]
