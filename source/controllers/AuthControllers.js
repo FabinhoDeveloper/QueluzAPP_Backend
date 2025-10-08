@@ -5,10 +5,19 @@ const { models } = require("../models/index")
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-router.post('/login', async (req, res) => {    
+router.post('/login', async (req, res) => {   
+    const { cpf, senha } = req.body
+
+    if (!cpf || !senha) {
+        return res.status(400).json({
+            erro: true,
+            mensagem: "Erro: Dados Obrigatórios!"
+        });
+    }
+
     const user = await models.usuario.findOne({
         where: {
-            cpf: req.body.cpf
+            cpf
         }
     });
     

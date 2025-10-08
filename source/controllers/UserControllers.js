@@ -39,34 +39,38 @@ router.get("/get/:id", async (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-    const { primeiro_nome, sobrenome, cpf, telefone, email, senha, endereco } = req.body;
+    try {
+        const { primeiro_nome, sobrenome, cpf, telefone, email, senha, endereco } = req.body;
 
-    console.log(req.body)
+        const senhaHash = await bcrypt.hash(senha, 8);
 
-    senhaHash = await bcrypt.hash(senha, 8);
-
-    await models.usuario.create(
-        {primeiro_nome, 
-        sobrenome, 
-        cpf, 
-        telefone, 
-        email, 
-        senha: senhaHash, 
-        endereco}
-    )
-        .then(() => {
-            return res.json({
-                erro: false,
-                mensagem: "Usuário cadastrado com sucesso!",
-            });
-        }).catch((error) => {
-            console.log(error)
-            return res.status(400).json({
-                erro: true,
-                mensagem: "Erro: Usuário não cadastrado com sucesso!",
-            });
+        const usuario = await models.usuario.create({
+            primeiro_nome,
+            sobrenome,
+            cpf,
+            telefone,
+            email,
+            senha: senhaHash,
+            endereco
         });
+
+        return res.status(201).json({
+            erro: false,
+            mensagem: "Usuário cadastrado com sucesso!",
+            usuario, // aqui você retorna o usuário criado
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(400).json({
+            erro: true,
+            mensagem: "Erro: Usuário não cadastrado com sucesso!",
+            detalhe: error.message
+        });
+    }
 });
+
 
 router.put("/update/:id", async (req, res) => {
     const { id } = req.params;
