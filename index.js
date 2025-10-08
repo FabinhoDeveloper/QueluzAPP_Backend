@@ -5,8 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const { eAdmin } = require('./middlewares/auth');
-const User = require('./models/User');
+const { eAdmin } = require('./source/middlewares/auth');
+const User = require('./source/models/User');
 
 const app = express();
 
