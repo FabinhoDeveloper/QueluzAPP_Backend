@@ -1,11 +1,11 @@
 const app = require("express")
 const router = app.Router()
 const { models } = require("../models/index")
+const bcrypt = require("bcryptjs")
 
 router.get("/get", async (req, res) => {
     await models.usuario.findAll({
-        attributes: ['id', 'cpf', 'password'],
-        order: [['id', 'DESC']]
+        order: [['id_usuario', 'DESC']]
     })
         .then((users) => {
             return res.json({
@@ -39,27 +39,39 @@ router.get("/get/:id", async (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-    var dados = req.body;
-    dados.password = await bcrypt.hash(dados.password, 8);
+    const { primeiro_nome, sobrenome, cpf, telefone, email, senha, endereco } = req.body;
 
-    await models.usuario.create(dados)
+    console.log(req.body)
+
+    senhaHash = await bcrypt.hash(senha, 8);
+
+    await models.usuario.create(
+        {primeiro_nome, 
+        sobrenome, 
+        cpf, 
+        telefone, 
+        email, 
+        senha: senhaHash, 
+        endereco}
+    )
         .then(() => {
             return res.json({
                 erro: false,
-                mensagem: "Usuário cadastrado com sucesso!"
+                mensagem: "Usuário cadastrado com sucesso!",
             });
-        }).catch(() => {
+        }).catch((error) => {
+            console.log(error)
             return res.status(400).json({
                 erro: true,
-                mensagem: "Erro: Usuário não cadastrado com sucesso!"
+                mensagem: "Erro: Usuário não cadastrado com sucesso!",
             });
         });
 });
 
-router.put("/update", async (req, res) => {
-    const { id } = req.body;
+router.put("/update/:id", async (req, res) => {
+    const { id } = req.params;
 
-    await models.usuario.update(req.body, { where: { id } })
+    await models.usuario.update(req.body, { where: { id_usuario: id } })
         .then(() => {
             return res.json({
                 erro: false,
