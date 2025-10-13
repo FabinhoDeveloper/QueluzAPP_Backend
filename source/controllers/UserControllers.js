@@ -1,7 +1,8 @@
 const app = require("express")
 const router = app.Router()
 const { models } = require("../models/index")
-const bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs");
+const { Op } = require("sequelize")
 
 router.get("/get", async (req, res) => {
     await models.usuario.findAll({
@@ -13,7 +14,7 @@ router.get("/get", async (req, res) => {
                 users
             });
         }).catch(() => {
-            return res.status(400).json({
+            return res.status(404).json({
                 erro: true,
                 mensagem: "Erro: Nenhum usuário encontrado!"
             });
@@ -42,6 +43,24 @@ router.post("/create", async (req, res) => {
     try {
         const { primeiro_nome, sobrenome, cpf, telefone, email, senha, endereco } = req.body;
 
+        if (!primeiro_nome || !sobrenome || !cpf || !email || !senha) {
+            return res.status(400).json({
+                erro: true,
+                mensagem: "Campos obrigatórios não preenchidos.",
+            });
+        }
+
+        const usuarioExistente = await models.usuario.findOne({
+            where: { [Op.or]: [{ email }, { cpf }] },
+        });
+
+        if (usuarioExistente) {
+            return res.status(409).json({
+                erro: true,
+                mensagem: "Já existe um usuário com este e-mail ou CPF.",
+            });
+        }
+
         const senhaHash = await bcrypt.hash(senha, 8);
 
         const usuario = await models.usuario.create({
@@ -63,7 +82,7 @@ router.post("/create", async (req, res) => {
     } catch (error) {
         console.error(error);
 
-        return res.status(400).json({
+        return res.status(500).json({
             erro: true,
             mensagem: "Erro: Usuário não cadastrado com sucesso!",
             detalhe: error.message

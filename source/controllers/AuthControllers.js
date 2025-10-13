@@ -22,14 +22,14 @@ router.post('/login', async (req, res) => {
     });
     
     if (user === null) {
-        return res.status(400).json({
+        return res.status(401).json({
             erro: true,
             mensagem: "Erro: Usuário ou a senha incorreta!"
         });
     };
 
     if (!(await bcrypt.compare(req.body.senha, user.senha))) {
-        return res.status(400).json({
+        return res.status(401).json({
             erro: true,
             mensagem: "Erro: Usuário ou a senha incorreta!"
         });
